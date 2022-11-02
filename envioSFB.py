@@ -44,6 +44,37 @@ print(cabeçalhoHex)
 SN = '38L10071'
 snHex = binascii.hexlify(SN.encode())
 print(snHex)
-
-
 print(len(separar))
+
+msg = 80000000
+
+# criando bloco de envio
+bloco =[]
+bloco.append(cabeçalhoHex.decode()+separar[0]+snHex.decode()+str(msg))
+bloco2 = re.findall('........',''.join(bloco))
+print(bloco2,len(bloco2)*4)
+
+# XOR a cada 4bytes
+cs=0
+for i in range(len(bloco2)):
+    cs ^= int(bloco2[i],16)
+print(cs,hex(cs))
+hexcs = hex(cs).replace('0x','')
+print(hexcs)
+bloco2.append(hexcs)
+
+final = 'C0'
+bloco2.append(final)
+print(bloco2)
+
+for i in range(len(separar)):
+    msg = msg + i
+    bloco.append(cabeçalhoHex.decode()+separar[i]+snHex.decode()+str(msg))
+    bloco2 = re.findall('........',''.join(bloco))
+    for j in range(len(bloco2)):
+        cs ^= int(bloco2[j],16)
+    hexcs = hex(cs).replace('0x','')
+    bloco2.append(hexcs)
+    bloco2.append(final)
+    print(f'bloco {i}: ',bloco2)
+
